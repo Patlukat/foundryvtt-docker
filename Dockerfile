@@ -19,6 +19,10 @@ RUN grep -l "#!" dist/*.js | xargs chmod a+x
 
 FROM node:${NODE_IMAGE_VERSION} AS optional-release-stage
 
+# This stage is optional and will only be executed if the FOUNDRY_RELEASE_URL or
+# FOUNDRY_USERNAME and FOUNDRY_PASSWORD secrets are provided.  It will download
+# and extract the Foundry VTT release for inclusion in the final stage.
+
 ARG FOUNDRY_RELEASE_URL
 ARG FOUNDRY_VERSION
 ENV ARCHIVE="foundryvtt-${FOUNDRY_VERSION}.zip"
