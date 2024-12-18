@@ -198,13 +198,6 @@ if [ $install_required = true ]; then
     exit 1
   fi
 
-  # TODO: This is a workaround for a "known issue" with FoundryVTT 13.333
-  # Install classic-level module per release notes.
-  pushd resources/app > /dev/null
-  log "Installing classic-level module."
-  npm install classic-level --silent --no-audit --no-fund --no-progress
-  popd > /dev/null
-
   if [[ "${CONTAINER_CACHE:-}" ]]; then
     log "Preserving release archive file in cache."
     # Check if CONTAINER_CACHE_SIZE is set and if so, ensure it's greater than 0
