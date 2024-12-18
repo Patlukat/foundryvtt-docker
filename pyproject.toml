@@ -1,0 +1,39 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools", "wheel"]
+
+[project]
+authors = [{ name = "Mark Feldhousen", email = "markf@geekpad.com" }]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Games/Entertainment :: Role-Playing",
+]
+dependencies = ["semver"]
+description = "FoundryVTT Docker Python library"
+dynamic = ["version"]
+keywords = ["foundryvtt", "virtual tabletop"]
+license = { file = "LICENSE" }
+name = "foundryvtt-docker"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.urls]
+homepage = "https://github.com/felddy"
+issues = "https://github.com/felddy/foundryvtt-docker/issues"
+source = "https://github.com/felddy/foundryvtt-docker"
+
+[project.optional-dependencies]
+test = ["coverage", "coveralls", "docker", "pre-commit", "pytest", "pytest-cov"]
+
+[tool.setuptools.dynamic]
+version = { attr = "_version.__version__" }
