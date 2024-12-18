@@ -39,12 +39,6 @@ else
   fi
 fi
 
-if [ "$1" = "--shell" ]; then
-  log_warn "Starting a shell as requested by argument --shell"
-  /bin/sh
-  exit $?
-fi
-
 if [[ "${FOUNDRY_IP_DISCOVERY:-}" == "false" ]]; then
   log "FOUNDRY_IP_DISCOVERY is set to false: Disabling IP discovery."
   # Add argument to disable IP discovery
