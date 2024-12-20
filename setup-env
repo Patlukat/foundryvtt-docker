@@ -13,7 +13,7 @@ It does the following:
   - Allows the user to specify a name for the virtual environment.
   - Verifies pyenv and pyenv-virtualenv are installed.
   - Creates the Python virtual environment.
-  - Configures the activation of the virtual enviroment for the repo directory.
+  - Configures the activation of the virtual environment for the repo directory.
   - Installs the requirements needed for development (including mypy type stubs).
   - Installs git pre-commit hooks.
   - Configures git remotes for upstream "lineage" repositories.
@@ -23,7 +23,7 @@ Usage:
   setup-env (-h | --help)
 
 Options:
-  -f | --force             Delete virtual enviroment if it already exists.
+  -f | --force             Delete virtual environment if it already exists.
   -h | --help              Show this message.
   -i | --install-hooks     Install hook environments for all environments in the
                            pre-commit config file.
