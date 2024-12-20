@@ -43,7 +43,7 @@ docker run \
   --env FOUNDRY_PASSWORD='<your_password>' \
   --publish 30000:30000/tcp \
   --volume <your_data_dir>:/data \
-  felddy/foundryvtt:release
+  felddy/foundryvtt:13
 ```
 
 > [!TIP]
@@ -67,7 +67,7 @@ docker run \
   --env FOUNDRY_RELEASE_URL='<temporary_url>' \
   --publish 30000:30000/tcp \
   --volume <your_data_dir>:/data \
-  felddy/foundryvtt:release
+  felddy/foundryvtt:13
 ```
 
 ### Configuration management ###
@@ -92,7 +92,7 @@ configuration files, set `CONTAINER_PRESERVE_CONFIG` to `true`.
     ---
     services:
       foundry:
-        image: felddy/foundryvtt:release
+        image: felddy/foundryvtt:13
         hostname: my_foundry_host
         volumes:
           - type: bind
@@ -150,7 +150,7 @@ uses `secrets.json`.  Regardless of the name you choose it must be targeted to
 
     services:
       foundry:
-        image: felddy/foundryvtt:release
+        image: felddy/foundryvtt:13
         hostname: my_foundry_host
         volumes:
           - type: bind
@@ -196,7 +196,7 @@ upgrade to a new version of Foundry pull an updated image version.
 1. Pull the new image:
 
     ```console
-    docker pull felddy/foundryvtt:release
+    docker pull felddy/foundryvtt:13
     ```
 
 1. Follow the previous instructions for [running](#running) the container above.
@@ -206,15 +206,20 @@ upgrade to a new version of Foundry pull an updated image version.
 The images of this container are tagged with [semantic
 versions](https://semver.org) that align with the [version and build of Foundry
 Virtual Tabletop](https://foundryvtt.com/article/versioning/) that they support.
-It is recommended that most users use the `:release` tag.
+
+> [!TIP]
+> It is recommended that users use the major version tag: `:13` Using the major
+> tag will ensure that you receive the most recent version of the software that
+> is compatible with your saved data, and prevents inadvertent upgrades to a new
+> major version.
 
 | Image:tag | Description |
 |-----------|-------------|
-|`felddy/foundryvtt:release` | The most recent image from the `stable` channel.  These images are **considered stable**, and well-tested.  Most users will use this tag.  The `latest` tag always points to the same version as `release`.|
-|`felddy/foundryvtt:13.333.0`| An exact image version. |
+|`felddy/foundryvtt:13`| The most recent image matching the major version number.  Most users will use this tag. |
 |`felddy/foundryvtt:13.333`| The most recent image matching the major and minor version numbers. |
-|`felddy/foundryvtt:13`| The most recent image matching the major version number. |
-|`felddy/foundryvtt:latest`| See the `release` tag.  [Why does `latest` == `release`?](https://vsupalov.com/docker-latest-tag/) |
+|`felddy/foundryvtt:13.333.0`| An exact image version. |
+|`felddy/foundryvtt:release` | The most recent image from the `stable` channel.  These images are **considered stable**, and well-tested.  The `latest` tag always points to the same version as `release`.|
+|`felddy/foundryvtt:latest`| Same as the `release` tag.  [Why does `latest` == `release`?](https://vsupalov.com/docker-latest-tag/) |
 
 See the [tags tab](https://hub.docker.com/r/felddy/foundryvtt/tags) on Docker
 Hub for a list of all the supported tags.
