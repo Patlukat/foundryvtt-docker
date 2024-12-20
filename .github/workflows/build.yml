@@ -112,14 +112,11 @@ jobs:
     uses: felddy/reusable-workflows/.github/workflows/docker-build-image.yml@v2
     with:
       artifact_name: ${{ needs.config.outputs.image_artifact_name_stem }}-${{ needs.config.outputs.test_platform }}
-      build_arg_1_name: VERSION
       cache_from_scopes: ${{ needs.config.outputs.test_platform }}
       cache_to_scope: ${{ needs.config.outputs.test_platform }}
       image_archive_name_stem: ${{ needs.config.outputs.test_platform }}
       image_labels: ${{ needs.metadata.outputs.image_labels }}
       platforms: ${{ needs.config.outputs.test_platform }}
-    secrets:
-      build_arg_1_value: ${{ needs.metadata.outputs.source_version }}
 
   build-pre-installed-test-image:
     name: "Build pre-installed test image"
@@ -132,7 +129,6 @@ jobs:
     uses: felddy/reusable-workflows/.github/workflows/docker-build-image.yml@v2
     with:
       artifact_name: pre-installed-${{ needs.config.outputs.image_artifact_name_stem }}-${{ needs.config.outputs.test_platform }}
-      build_arg_1_name: VERSION
       build_secret_1_name: foundry_password
       build_secret_2_name: foundry_username
       cache_from_scopes: ${{ needs.config.outputs.test_platform }}-pre-installed
@@ -141,7 +137,6 @@ jobs:
       image_labels: ${{ needs.metadata.outputs.image_labels }}
       platforms: ${{ needs.config.outputs.test_platform }}
     secrets:
-      build_arg_1_value: ${{ needs.metadata.outputs.source_version }}
       build_secret_1_value: ${{ secrets.FOUNDRY_PASSWORD }}
       build_secret_2_value: ${{ secrets.FOUNDRY_USERNAME }}
       image_archive_key: ${{ secrets.ARTIFACT_KEY }}
@@ -202,14 +197,11 @@ jobs:
     uses: felddy/reusable-workflows/.github/workflows/docker-build-image.yml@v2
     with:
       artifact_name: ${{ needs.config.outputs.image_artifact_name_stem }}-${{ matrix.platform }}
-      build_arg_1_name: VERSION
       cache_from_scopes: ${{ matrix.platform }}
       cache_to_scope: ${{ matrix.platform }}
       image_labels: ${{ needs.metadata.outputs.image_labels }}
       image_archive_name_stem: ${{ matrix.platform }}
       platforms: ${{ matrix.platform }}
-    secrets:
-      build_arg_1_value: ${{ needs.metadata.outputs.source_version }}
 
   generate-sboms:
     name: "Bill of Materials"

@@ -1,7 +1,7 @@
+ARG CONTAINER_VERSION=13.333.0
 ARG FOUNDRY_RELEASE_URL
 ARG FOUNDRY_VERSION=13.333
 ARG NODE_IMAGE_VERSION=20-bookworm-slim
-ARG VERSION
 
 FROM node:${NODE_IMAGE_VERSION} AS compile-typescript-stage
 
@@ -60,9 +60,9 @@ RUN \
 FROM node:${NODE_IMAGE_VERSION} AS final-stage
 
 ARG FOUNDRY_UID=421
+ARG CONTAINER_VERSION
 ARG FOUNDRY_VERSION
 ARG TARGETPLATFORM
-ARG VERSION
 
 LABEL com.foundryvtt.version=${FOUNDRY_VERSION}
 LABEL org.opencontainers.image.authors="markf+github@geekpad.com"
@@ -95,7 +95,7 @@ RUN addgroup --system --gid ${FOUNDRY_UID} foundry \
   tzdata \
   unzip \
   && rm -rf /var/lib/apt/lists/* \
-  && npm install && echo ${VERSION} > image_version.txt
+  && npm install && echo ${CONTAINER_VERSION} > image_version.txt
 
 VOLUME ["/data"]
 # HTTP Server
