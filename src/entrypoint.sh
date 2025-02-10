@@ -144,6 +144,13 @@ if [ $install_required = true ]; then
   if [[ "${CONTAINER_CACHE:-}" ]]; then
     log "Using CONTAINER_CACHE: ${CONTAINER_CACHE}"
     mkdir -p "${CONTAINER_CACHE}"
+    # Create a cache marker file in the cache directory.
+    cat << END_OF_LINE > "${CONTAINER_CACHE}/CACHEDIR.TAG"
+Signature: $(printf ".IsCacheDirectory" | md5sum | cut -d ' ' -f 1)
+# This file is a cache directory tag created by the felddy/foundryvtt container
+# https://github.com/felddy/foundryvtt-docker
+# For information about cache directory tags see https://bford.info/cachedir/
+END_OF_LINE
   else
     log_warn "CONTAINER_CACHE has been unset.  Release caching is disabled."
   fi
