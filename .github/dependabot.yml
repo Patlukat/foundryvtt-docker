@@ -7,8 +7,8 @@
 
 version: 2
 updates:
-  - package-ecosystem: "docker"
-    directory: "/"
+  - directory: /
+    package-ecosystem: docker
     schedule:
       interval: "daily"
     labels:
@@ -49,8 +49,8 @@ updates:
         patterns:
           - "*"
 
-  - package-ecosystem: "pip"
-    directory: "/"
+  - directory: /
+    package-ecosystem: pip
     schedule:
       interval: "daily"
     labels:

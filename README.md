@@ -1,5 +1,6 @@
 <div align="center">
-<img width="460" src="https://raw.githubusercontent.com/felddy/foundryvtt-docker/develop/assets/logo.png">
+<img width="460" src="https://raw.githubusercontent.com/felddy/foundryvtt-docker/develop/assets/logo.png"
+alt="A whale carrying a icosahedron (d20) on its back">
 </div>
 
 # foundryvtt-docker #
@@ -73,7 +74,7 @@ docker run \
 specified using [environment variables](#environment-variables).  It is highly
 recommended that you use [`docker compose`](https://docs.docker.com/compose/) or
 similar container orchestration to manage your server's configuration.  A
-`docker-compose.yml` file, like the example below, is a reliable way to start
+`compose.yml` file, like the example below, is a reliable way to start
 and maintain a container while capturing its configurations.
 
 Each time the container starts it generates the configuration files needed by
@@ -82,12 +83,11 @@ means **changes made in the server's configuration GUI will not persist between
 container restarts**.  If you would like to disable the regeneration of these
 configuration files, set `CONTAINER_PRESERVE_CONFIG` to `true`.
 
-1. Create a `docker-compose.yml` file similar to the one below.  Provide
+1. Create a `compose.yml` file similar to the one below.  Provide
    your credentials as values to the environment variables:
 
     ```yaml
     ---
-    version: "3.8"
 
     services:
       foundry:
@@ -139,11 +139,10 @@ uses `secrets.json`.  Regardless of the name you choose it must be targeted to
     }
     ```
 
-1. Then add the secret to your `docker-compose.yml` file:
+1. Then add the secret to your `compose.yml` file:
 
     ```yaml
     ---
-    version: "3.8"
 
     secrets:
       config_json:

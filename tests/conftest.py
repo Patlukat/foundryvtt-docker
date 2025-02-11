@@ -18,7 +18,7 @@ REDACTION_REGEXES = [
     # Cloudflare R2 pre-signed URL
     re.compile(r"\?verify=([0-9]+-[a-zA-Z0-9%]+)"),
 ]
-VERSION_FILE = "src/_version.py"
+VERSION_FILE = "src/version.txt"
 VERSION_SERVICE_NAME = f"{MAIN_SERVICE_NAME}-version"
 
 client = docker.from_env()
@@ -82,10 +82,9 @@ def version_container(image_tag):
 @pytest.fixture(scope="session")
 def project_version():
     """Get the project version."""
-    pkg_vars = {}
     with open(VERSION_FILE) as f:
-        exec(f.read(), pkg_vars)  # nosec
-    return pkg_vars["__version__"]
+        version = f.read().strip()
+    return version
 
 
 @pytest.fixture(scope="session")

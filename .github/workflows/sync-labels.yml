@@ -4,14 +4,20 @@ name: sync-labels
 on:
   push:
     paths:
-      - '.github/labels.yml'
-      - '.github/workflows/sync-labels.yml'
+      - .github/labels.yml
+      - .github/workflows/sync-labels.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  diagnostics:
+    name: Run Diagnostics
+    uses: felddy/reusable-workflows/.github/workflows/diagnostics.yml@v2
   labeler:
+    needs:
+      - diagnostics
     permissions:
       # actions/checkout needs this to fetch code
       contents: read

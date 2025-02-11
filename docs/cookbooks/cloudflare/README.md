@@ -38,7 +38,7 @@
 
     ```console
     .
-    ├── docker-compose.yml
+    ├── compose.yml
     ├── foundry_secrets.json
     └── volumes/
         ├── cloudflare_config/
@@ -47,7 +47,7 @@
         └── foundry_data/
     ```
 
-1. Edit `docker-compose.yml` and `foundry_secrets.json` and replace all the
+1. Edit `compose.yml` and `foundry_secrets.json` and replace all the
 placeholder values that are contained within `< >`.  For example, modifying the
 placeholders for the `foundry` service:
 

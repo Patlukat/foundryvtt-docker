@@ -4,20 +4,22 @@
 #
 # You may wish to alter this file to override the set of languages analyzed,
 # or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
-name: "CodeQL"
+name: CodeQL
 
 on:
-  push:
-    branches: [develop, develop-prerelease]
+  merge_group:
+    types:
+      - checks_requested
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [develop, develop-prerelease]
+    # The branches here must be a subset of the ones in the push key
+    branches:
+      - develop
+      - develop-prerelease
+  push:
+    # Dependabot triggered push events have read-only access, but uploading code
+    # scanning requires write access.
+    branches-ignore:
+      - dependabot/**
   schedule:
     - cron: '31 7 * * 2'
 
@@ -26,12 +28,18 @@ permissions:
   contents: read
 
 jobs:
+  diagnostics:
+    name: Run Diagnostics
+    uses: felddy/reusable-workflows/.github/workflows/diagnostics.yml@v2
   analyze:
     name: Analyze
+    needs:
+      - diagnostics
     runs-on: ubuntu-latest
     permissions:
-      actions: read
+      # actions/checkout needs this to fetch code
       contents: read
+      # required for all workflows
       security-events: write
 
     strategy:
