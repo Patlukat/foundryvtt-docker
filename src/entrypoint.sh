@@ -157,6 +157,8 @@ END_OF_LINE
 
   if [[ "${presigned_url:-}" ]]; then
     log "Downloading Foundry Virtual Tabletop release."
+    # Temporarily disable errexit for the curl command to capture its exit status
+    set +e
     # Download release if newer than cached version.
     # Filter out warnings about bad date formats if the file is missing.
     curl ${CONTAINER_VERBOSE+--verbose} --fail --location \
@@ -165,10 +167,25 @@ END_OF_LINE
       --output "${downloading_filename}" "${presigned_url}" 2>&1 \
       | tr "\r" "\n" \
       | sed --unbuffered '/^Warning: .* date/d'
+    curl_exit_code=$?
+    set -e
 
-    # Rename the download now that it is completed.
-    # If we had a cache hit, the file is already renamed.
-    mv "${downloading_filename}" "${release_filename}" > /dev/null 2>&1 || true
+    if [ ${curl_exit_code} -ne 0 ]; then
+      log_warn "Download from presigned URL failed with exit code ${curl_exit_code}."
+      # Remove any partially downloaded file
+      [ -f "${downloading_filename}" ] && rm -f "${downloading_filename}"
+
+      if [ -f "${release_filename}" ]; then
+        log "Falling back to existing cached release file: ${release_filename}"
+      else
+        log_error "No valid cached release file found. Unable to proceed with installation."
+        exit 1
+      fi
+    else
+      # Download succeeded so rename the file to the final name.
+      # If we had a cache hit, the file is already renamed.
+      mv "${downloading_filename}" "${release_filename}" > /dev/null 2>&1 || true
+    fi
   fi
 
   if [ -f "${release_filename}" ]; then
