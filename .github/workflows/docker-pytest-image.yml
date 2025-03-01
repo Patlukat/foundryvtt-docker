@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e  # tag=v2.10.4
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481  # tag=v2.11.0
         with:
           egress-policy: audit
           # allowed-endpoints: >
@@ -115,7 +115,7 @@ jobs:
           python-version: ${{ inputs.python_version }}
 
       - name: Cache testing environments
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57  # tag=v4.2.0
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf  # tag=v4.2.2
         env:
           BASE_CACHE_KEY: "${{ github.job }}-${{ runner.os }}-\
             py${{ steps.setup-python.outputs.python-version }}-"
@@ -133,7 +133,7 @@ jobs:
           pip install --upgrade --requirement requirements-test.txt
 
       - name: Download Docker image artifact
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # tag=v4.1.8
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806  # tag=v4.1.9
         with:
           name: ${{ inputs.image_artifact_name }}
           path: ${{ env.ARTIFACT_WORK_DIR }}
@@ -183,7 +183,7 @@ jobs:
 
       - name: Upload unencrypted data artifacts
         if: ( success() || failure() ) && steps.check_data_archive_key.outputs.do_encryption == 'false'
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08  # tag=v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1  # tag=v4.6.1
         with:
           name: ${{ inputs.data_artifact_name }}
           path: data.tar.gz
@@ -191,7 +191,7 @@ jobs:
 
       - name: Upload encrypted data artifacts
         if: ( success() || failure() ) && steps.check_data_archive_key.outputs.do_encryption == 'true'
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08  # tag=v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1  # tag=v4.6.1
         with:
           name: ${{ inputs.data_artifact_name }}
           path: data.tar.7z
