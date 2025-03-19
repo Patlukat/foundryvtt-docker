@@ -74,6 +74,7 @@
     "unbuffered",
     "venv",
     "virtualenv",
-    "wontfix"
+    "wontfix",
+    "zipinfo"
   ]
 }

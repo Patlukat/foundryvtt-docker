@@ -54,6 +54,14 @@ const HEADERS: Headers = new Headers({
 const INITIAL_RETRY_DELAY_S = 120; // 2 minutes
 
 /**
+ * ReleaseResponse - JSON response from the release URL endpoint.
+ */
+interface ReleaseResponse {
+  url: string;
+  lifetime: number;
+}
+
+/**
  * sleepWithProgress - Exponential sleep back off based on attempt number.
  * Logs a messages during sleep to indicate progress.
  * @param  {number} attempt Attempt number.
@@ -88,8 +96,8 @@ async function fetchReleaseURL(
   retries: number,
 ): Promise<string | null> {
   logger.info(`Fetching presigned release URL for build ${build}...`);
-  const release_url: string = `${BASE_URL}/releases/download?build=${build}&platform=linux`;
-  for (var attempt = 1; attempt <= 1 + retries; attempt++) {
+  const release_url: string = `${BASE_URL}/releases/download?build=${build}&platform=node&response_type=json`;
+  for (let attempt = 1; attempt <= 1 + retries; attempt++) {
     // If this is not the first attempt, wait a bit before trying again.
     if (attempt > 1) {
       await sleepWithProgress(attempt);
@@ -99,17 +107,17 @@ async function fetchReleaseURL(
     const response: Response = await fetch(release_url, {
       method: "GET",
       headers: HEADERS,
-      redirect: "manual",
     });
-    // Expect a redirect status
-    if (!(response.status >= 300 && response.status < 400)) {
+    // Check for a successful 200 response
+    if (response.status !== 200) {
       logger.warn(
         `Unexpected response ${response.status}: ${response.statusText}`,
       );
       continue;
     }
 
-    const presigned_url: string | null = response.headers.get("location");
+    const jsonData = (await response.json()) as ReleaseResponse;
+    const presigned_url: string | null = jsonData.url;
     logger.debug(`Presigned URL: ${presigned_url}`);
 
     return presigned_url;

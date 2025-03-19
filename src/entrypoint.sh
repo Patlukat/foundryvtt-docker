@@ -197,14 +197,21 @@ END_OF_LINE
     log "Installing Foundry Virtual Tabletop ${FOUNDRY_VERSION}"
 
     # Check the mime-type of the file
-    log_debug "Checking mime-type of release file."
+    log_debug "Checking mime-type of release file: ${release_filename}"
     mime_type=$(file --mime-type --brief "${release_filename}")
     log_debug "Found mime-type: ${mime_type}"
 
     # Check if the file is a zip archive
     if [ "${mime_type}" = "application/zip" ]; then
-      log_debug "Extracting release file."
-      unzip -q "${release_filename}" 'resources/*'
+      if grep -q "^resources/app/main.mjs" <(zipinfo -1 "${release_filename}"); then
+        log_debug "Extracting Linux release file."
+        log_warn "You can conserve disk space by using Node.js releases instead of Linux releases."
+        unzip -q "${release_filename}" 'resources/*'
+      else
+        log_debug "Extracting Node.js release file."
+        mkdir -p "resources/app"
+        unzip -q "${release_filename}" -d "resources/app"
+      fi
       log_debug "Installation completed."
     else # The user provided the wrong file.
       if [ "${mime_type}" = "application/vnd.microsoft.portable-executable" ]; then

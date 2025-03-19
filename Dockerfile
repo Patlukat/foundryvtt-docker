@@ -1,7 +1,7 @@
-ARG CONTAINER_VERSION=13.337.0
+ARG CONTAINER_VERSION=13.338.0
 ARG FOUNDRY_RELEASE_URL
-ARG FOUNDRY_VERSION=13.337
-ARG NODE_IMAGE_VERSION=20-bookworm-slim
+ARG FOUNDRY_VERSION=13.338
+ARG NODE_IMAGE_VERSION=22-bookworm-slim
 
 FROM node:${NODE_IMAGE_VERSION} AS compile-typescript-stage
 
@@ -54,7 +54,8 @@ RUN \
   if [ -n "${DOWNLOAD_URL}" ]; then \
   apt-get update && apt-get install -y unzip wget && \
   wget -O ${ARCHIVE} "${DOWNLOAD_URL}" && \
-  unzip -d dist ${ARCHIVE} 'resources/*'; \
+  mkdir -p "dist/resources/app" && \
+  unzip -d "dist/resources/app" ${ARCHIVE}; \
   fi
 
 FROM node:${NODE_IMAGE_VERSION} AS final-stage
