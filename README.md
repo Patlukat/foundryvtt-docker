@@ -301,7 +301,7 @@ secrets](#using-secrets) instead of environment variables.
 | `FOUNDRY_UPNP` | Allow Universal Plug and Play to automatically request port forwarding for the Foundry server port to your local network address. | `false` |
 | `FOUNDRY_UPNP_LEASE_DURATION` | Sets the Universal Plug and Play lease duration, allowing for the possibility of permanent leases for routers which do not support temporary leases.  To define an indefinite lease duration set the value to `0`. | `null` |
 | `FOUNDRY_VERSION` | Version of Foundry Virtual Tabletop to install. | `13.340` |
-| `FOUNDRY_WORLD` | The world to startup at system start. | `null` |
+| `FOUNDRY_WORLD` | The directory name of the world to launch at system start. | `null` |
 | `TZ`     | Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) | `UTC` |
 
 ### Node.js variables ###

@@ -4,7 +4,8 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-CONFIG_DIR="/data/Config"
+DATA_DIR="/data"
+CONFIG_DIR="${DATA_DIR}/config"
 DEPRECATED_ENVS="CONTAINER_PRESERVE_OWNER FOUNDRY_UID FOUNDRY_GID TIMEZONE"
 LICENSE_FILE="${CONFIG_DIR}/license.json"
 # setup logging
@@ -47,6 +48,41 @@ log "Starting felddy/foundryvtt container v${image_version}"
 log_debug "CONTAINER_VERBOSE set.  Debug logging enabled."
 log_debug "Running as: $(id)"
 log_debug "Environment:\n$(env | sort | sed -E 's/(.*PASSWORD|KEY.*)=.*/\1=[REDACTED]/g')"
+log_debug "Data directory: ${DATA_DIR}"
+
+# Show the mount details for the data directory
+mount_info=$(findmnt -n -o SOURCE,FSTYPE,OPTIONS --target "${DATA_DIR}")
+log_debug "Mount info for ${DATA_DIR}: ${mount_info}"
+
+# Test volume permissions
+permissions_test_file="${DATA_DIR}/.container-permissions-test.txt"
+permission_test_failed=0
+log_debug "Testing permissions on ${permissions_test_file}"
+if ! touch "${permissions_test_file}" 2> /dev/null; then
+  log_error "Volume write test failed."
+  permission_test_failed=1
+else
+  log_debug "Volume write test succeeded."
+fi
+if ! cat "${permissions_test_file}" > /dev/null 2>&1; then
+  log_error "Volume read test failed."
+  permission_test_failed=1
+else
+  log_debug "Volume read test succeeded."
+fi
+if ! rm -f "${permissions_test_file}" 2> /dev/null; then
+  log_error "Volume delete test failed."
+  permission_test_failed=1
+else
+  log_debug "Volume delete test succeeded."
+fi
+if [ "${permission_test_failed}" -ne 0 ]; then
+  log_error "Aborting due to insufficient permissions on ${DATA_DIR}"
+  log_error "Container running as uid:gid: $(id -u):$(id -g)"
+  log_error "For more information see the discussion at: https://github.com/felddy/foundryvtt-docker/discussions/1197"
+  exit 1
+fi
+log_debug "All permissions tests succeeded."
 
 cookiejar_file="/tmp/cookiejar.json"
 license_min_length=24
@@ -139,7 +175,7 @@ if [ $install_required = true ]; then
 
   # If CONTAINER_CACHE is null, set it to a default.
   # If it set to an empty string, disable the caching.
-  CONTAINER_CACHE="${CONTAINER_CACHE-/data/container_cache}"
+  CONTAINER_CACHE="${CONTAINER_CACHE-${DATA_DIR}/container_cache}"
 
   if [[ "${CONTAINER_CACHE:-}" ]]; then
     log "Using CONTAINER_CACHE: ${CONTAINER_CACHE}"
