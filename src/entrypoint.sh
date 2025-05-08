@@ -5,7 +5,7 @@ set -o errexit
 set -o pipefail
 
 DATA_DIR="/data"
-CONFIG_DIR="${DATA_DIR}/config"
+CONFIG_DIR="${DATA_DIR}/Config"
 DEPRECATED_ENVS="CONTAINER_PRESERVE_OWNER FOUNDRY_UID FOUNDRY_GID TIMEZONE"
 LICENSE_FILE="${CONFIG_DIR}/license.json"
 # setup logging
@@ -36,9 +36,9 @@ done
 handle_sigterm() {
   log_warn "TERM signal received.  Shutting down server."
   # Only attempt to terminate if the child process is still running
-  if kill -0 "$child_pid" 2> /dev/null; then
+  if kill -0 "$child_pid" 2>/dev/null; then
     log_debug "Sending TERM signal to child pid: ${child_pid}"
-    kill -TERM "$child_pid" 2> /dev/null
+    kill -TERM "$child_pid" 2>/dev/null
   else
     log_warn "Child pid: ${child_pid} exited before we could sent TERM signal."
   fi
@@ -58,19 +58,19 @@ log_debug "Mount info for ${DATA_DIR}: ${mount_info}"
 permissions_test_file="${DATA_DIR}/.container-permissions-test.txt"
 permission_test_failed=0
 log_debug "Testing permissions on ${permissions_test_file}"
-if ! touch "${permissions_test_file}" 2> /dev/null; then
+if ! touch "${permissions_test_file}" 2>/dev/null; then
   log_error "Volume write test failed."
   permission_test_failed=1
 else
   log_debug "Volume write test succeeded."
 fi
-if ! cat "${permissions_test_file}" > /dev/null 2>&1; then
+if ! cat "${permissions_test_file}" >/dev/null 2>&1; then
   log_error "Volume read test failed."
   permission_test_failed=1
 else
   log_debug "Volume read test succeeded."
 fi
-if ! rm -f "${permissions_test_file}" 2> /dev/null; then
+if ! rm -f "${permissions_test_file}" 2>/dev/null; then
   log_error "Volume delete test failed."
   permission_test_failed=1
 else
@@ -181,7 +181,7 @@ if [ $install_required = true ]; then
     log "Using CONTAINER_CACHE: ${CONTAINER_CACHE}"
     mkdir -p "${CONTAINER_CACHE}"
     # Create a cache marker file in the cache directory.
-    cat << END_OF_LINE > "${CONTAINER_CACHE}/CACHEDIR.TAG"
+    cat <<END_OF_LINE >"${CONTAINER_CACHE}/CACHEDIR.TAG"
 Signature: $(printf ".IsCacheDirectory" | md5sum | cut -d ' ' -f 1)
 # This file is a cache directory tag created by the felddy/foundryvtt container
 # https://github.com/felddy/foundryvtt-docker
@@ -205,9 +205,9 @@ END_OF_LINE
     curl ${CONTAINER_VERBOSE+--verbose} --fail --location \
       --user-agent "${curl_user_agent}" \
       --time-cond "${release_filename}" \
-      --output "${downloading_filename}" "${presigned_url}" 2>&1 \
-      | tr "\r" "\n" \
-      | sed --unbuffered '/^Warning: .* date/d'
+      --output "${downloading_filename}" "${presigned_url}" 2>&1 |
+      tr "\r" "\n" |
+      sed --unbuffered '/^Warning: .* date/d'
     curl_exit_code=$?
     set -e
 
@@ -225,7 +225,7 @@ END_OF_LINE
     else
       # Download succeeded so rename the file to the final name.
       # If we had a cache hit, the file is already renamed.
-      mv "${downloading_filename}" "${release_filename}" > /dev/null 2>&1 || true
+      mv "${downloading_filename}" "${release_filename}" >/dev/null 2>&1 || true
     fi
   fi
 
@@ -275,7 +275,7 @@ END_OF_LINE
     log "Preserving release archive file in cache."
     # Check if CONTAINER_CACHE_SIZE is set and if so, ensure it's greater than 0
     if [[ -n "${CONTAINER_CACHE_SIZE:-}" ]]; then
-      if ! [[ "${CONTAINER_CACHE_SIZE}" -gt 0 ]] 2> /dev/null; then
+      if ! [[ "${CONTAINER_CACHE_SIZE}" -gt 0 ]] 2>/dev/null; then
         log_error "If set, CONTAINER_CACHE_SIZE must be 1 or greater.  Found: ${CONTAINER_CACHE_SIZE}"
         exit 1
       fi
@@ -286,9 +286,9 @@ END_OF_LINE
       cache_files_removed_count=0
 
       # Store the list of cache files to remove
-      file_list=$(find "${CONTAINER_CACHE}" -maxdepth 1 -name 'foundryvtt-*.zip' \
-        | sort -Vr \
-        | awk -v keep="${CONTAINER_CACHE_SIZE}" 'NR > keep')
+      file_list=$(find "${CONTAINER_CACHE}" -maxdepth 1 -name 'foundryvtt-*.zip' |
+        sort -Vr |
+        awk -v keep="${CONTAINER_CACHE_SIZE}" 'NR > keep')
 
       # Iterate over the file list
       if [ -n "$file_list" ]; then
@@ -359,7 +359,7 @@ if [ ! -f "${LICENSE_FILE}" ]; then
     set -o nounset
     log "Applying license key passed via FOUNDRY_LICENSE_KEY."
     # FOUNDRY_LICENSE_KEY is long enough to be a key
-    echo "{ \"license\": \"${FOUNDRY_LICENSE_KEY}\" }" | tr -d '-' > "${LICENSE_FILE}"
+    echo "{ \"license\": \"${FOUNDRY_LICENSE_KEY}\" }" | tr -d '-' >"${LICENSE_FILE}"
   elif [ -f ${cookiejar_file} ]; then
     log "Attempting to fetch license key from authenticated account."
     if [[ "${FOUNDRY_LICENSE_KEY:-}" ]]; then
@@ -376,7 +376,7 @@ if [ ! -f "${LICENSE_FILE}" ]; then
         --user-agent="${node_user_agent}" \
         "${cookiejar_file}")
     fi
-    echo "{ \"license\": \"${fetched_license_key}\" }" > "${LICENSE_FILE}"
+    echo "{ \"license\": \"${fetched_license_key}\" }" >"${LICENSE_FILE}"
   else
     log_warn "Unable to apply a license key since neither a license key nor credentials were provided.  The license key will need to be entered in the browser."
   fi
