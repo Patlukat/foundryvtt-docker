@@ -217,7 +217,7 @@ Virtual Tabletop](https://foundryvtt.com/article/versioning/) that they support.
 |-----------|-------------|
 |`felddy/foundryvtt:13`| The most recent image matching the major version number.  Most users will use this tag. |
 |`felddy/foundryvtt:13.342`| The most recent image matching the major and minor version numbers. |
-|`felddy/foundryvtt:13.342.0`| An exact image version. |
+|`felddy/foundryvtt:13.342.1`| An exact image version. |
 |`felddy/foundryvtt:release` | The most recent image from the `stable` channel.  These images are **considered stable**, and well-tested.  The `latest` tag always points to the same version as `release`.|
 |`felddy/foundryvtt:latest`| Same as the `release` tag.  [Why does `latest` == `release`?](https://vsupalov.com/docker-latest-tag/) |
 
@@ -335,7 +335,7 @@ Build the image locally using this git repository as the [build context](https:/
 
 ```console
 docker build \
-  --tag felddy/foundryvtt:13.342.0 \
+  --tag felddy/foundryvtt:13.342.1 \
   https://github.com/felddy/foundryvtt-docker.git#develop
 ```
 
@@ -359,7 +359,7 @@ Docker:
     docker buildx build \
       --platform linux/amd64 \
       --output type=docker \
-      --tag felddy/foundryvtt:13.342.0 .
+      --tag felddy/foundryvtt:13.342.1 .
     ```
 
 ## Pre-installed distribution builds ##
@@ -380,7 +380,7 @@ build-time instead of start-time.
 docker build \
   --secret id=foundry_username,src=<(echo "<your_username>") \
   --secret id=foundry_password,src=<(echo "<your_password>") \
-  --tag felddy/foundryvtt:13.342.0 \
+  --tag felddy/foundryvtt:13.342.1 \
   https://github.com/felddy/foundryvtt-docker.git#develop
 ```
 
@@ -393,7 +393,7 @@ docker build \
 > docker build \
 >   --secret id=foundry_username,src=<(jq -r '.foundry_username' path/to/credentials.json) \
 >   --secret id=foundry_password,src=<(jq -r '.foundry_password' path/to/credentials.json) \
->   --tag felddy/foundryvtt:13.342.0 \
+>   --tag felddy/foundryvtt:13.342.1 \
 >   https://github.com/felddy/foundryvtt-docker.git#develop
 > ```
 
@@ -405,7 +405,7 @@ documentation](https://docs.docker.com/build/building/secrets/).
 ```console
 docker build \
   --build-arg FOUNDRY_RELEASE_URL='<temporary_url>' \
-  --tag felddy/foundryvtt:13.342.0 \
+  --tag felddy/foundryvtt:13.342.1 \
   https://github.com/felddy/foundryvtt-docker.git#develop
 ```
 
