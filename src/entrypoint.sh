@@ -385,6 +385,10 @@ else
   log "Not modifying existing installation license key."
 fi
 
+# Export variables that were possibly set from secrets
+# and are used by the launcher.
+export FOUNDRY_ADMIN_KEY FOUNDRY_PASSWORD_SALT
+
 log "Starting launcher."
 # set the TERM signal handler
 trap handle_sigterm TERM
