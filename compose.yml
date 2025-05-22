@@ -46,7 +46,7 @@ services:
       # - FOUNDRY_TELEMETRY=
       # - FOUNDRY_UPNP=false
       # - FOUNDRY_UPNP_LEASE_DURATION=
-      # - FOUNDRY_VERSION=13.342
+      # - FOUNDRY_VERSION=13.344
       # - FOUNDRY_WORLD=
     ports:
       - target: 30000
