@@ -28,7 +28,7 @@ Options:
 
 // Imports
 import { CookieJar } from "tough-cookie";
-import { FileCookieStore } from "tough-cookie-file-store";
+import FileCookieStore from "tough-cookie-file-store";
 import createLogger from "./logging.js";
 import docopt from "docopt";
 import fetchCookie from "fetch-cookie";

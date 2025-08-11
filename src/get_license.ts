@@ -31,7 +31,7 @@ Options:
 
 // Imports
 import { CookieJar } from "tough-cookie";
-import { FileCookieStore } from "tough-cookie-file-store";
+import FileCookieStore from "tough-cookie-file-store";
 import * as cheerio from "cheerio";
 import createLogger from "./logging.js";
 import docopt from "docopt";
@@ -74,11 +74,11 @@ async function fetchLicenses(username: string): Promise<string[]> {
     throw new Error(`Unexpected response ${response.statusText}`);
   }
   const body = await response.text();
-  const $ = await cheerio.load(body);
+  const $ = cheerio.load(body);
 
   const licenses: string[] = $("div.license label.copy input")
-    .map(function (this: cheerio.Element) {
-      const value = $(this).attr("value");
+    .map((_, el) => {
+      const value = $(el).attr("value");
       return value ? value.replace(/-/g, "") : undefined; // remove dashes
     })
     .get()

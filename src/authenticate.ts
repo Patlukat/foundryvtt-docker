@@ -23,7 +23,7 @@ Options:
 
 // Imports
 import { CookieJar, Cookie } from "tough-cookie";
-import { FileCookieStore } from "tough-cookie-file-store";
+import FileCookieStore from "tough-cookie-file-store";
 import * as cheerio from "cheerio";
 import createLogger from "./logging.js";
 import winston from "winston";
@@ -55,7 +55,7 @@ const HEADERS: Headers = new Headers({
  *
  * @return {string}  CSRF middleware token extracted from the login form.
  */
-async function fetchTokens() {
+async function fetchTokens(): Promise<string> {
   // Make a request to the main site to get our two CSRF tokens
   logger.info(`Requesting CSRF tokens from ${BASE_URL}`);
   logger.debug(`Fetching: ${BASE_URL}`);
@@ -67,16 +67,14 @@ async function fetchTokens() {
     throw new Error(`Unexpected response ${response.statusText}`);
   }
   const body = await response.text();
-  const $ = await cheerio.load(body);
+  const $ = cheerio.load(body);
 
-  const csrfmiddlewaretoken: string | string[] | undefined = $(
-    'input[name ="csrfmiddlewaretoken"]',
-  ).val();
-  if (typeof csrfmiddlewaretoken == "undefined") {
+  const token = $('input[name="csrfmiddlewaretoken"]').attr("value")?.trim();
+  if (!token) {
     logger.error("Could not find the CSRF middleware token.");
     throw new Error("Could not find the CSRF middleware token.");
   }
-  return csrfmiddlewaretoken;
+  return token;
 }
 
 /**
