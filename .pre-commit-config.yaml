@@ -182,7 +182,7 @@ repos:
 
   # Ansible hooks
   - repo: https://github.com/ansible/ansible-lint
-    rev: v24.10.0
+    rev: v25.7.0
     hooks:
       - id: ansible-lint
         additional_dependencies:
