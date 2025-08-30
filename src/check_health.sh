@@ -12,6 +12,6 @@ else
   STATUS_URL="${protocol}://localhost:30000/api/status"
 fi
 
-/usr/bin/curl --cookie-jar healthcheck-cookiejar.txt \
-  --cookie healthcheck-cookiejar.txt --insecure --fail --silent \
+/usr/bin/curl --cookie-jar /tmp/healthcheck-cookiejar.txt \
+  --cookie /tmp/healthcheck-cookiejar.txt --insecure --fail --silent \
   "${STATUS_URL}" || exit 1
