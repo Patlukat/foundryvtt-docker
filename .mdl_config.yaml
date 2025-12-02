@@ -1,5 +1,4 @@
 ---
-
 # Default state for all rules
 default: true
 
@@ -34,8 +33,9 @@ MD029:
 
 # MD033/no-inline-html - Inline HTML
 MD033:
-  # The h1 and img elements are allowed to permit header images
+  # The div, h1 and img elements are allowed to permit header images
   allowed_elements:
+    - div
     - h1
     - img
 
@@ -43,6 +43,12 @@ MD033:
 MD035:
   # Enforce dashes for horizontal rules
   style: ---
+
+# MD041/first-line-heading/first-line-h1 - First line in file should be a top
+# level heading
+MD041:
+  # Allow content before first heading
+  allow_preamble: true
 
 # MD046/code-block-style - Code block style
 MD046:
