@@ -28,7 +28,10 @@ jobs:
       - name: Harden Runner
         uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # tag=v2.13.3
         with:
-          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # tag=v6.0.1
       - name: Sync repository labels
         if: success()
