@@ -265,7 +265,7 @@ secrets](#using-secrets) instead of environment variables.
 
 | Name                  | Purpose                                                                                                    |
 | --------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `FOUNDRY_RELEASE_URL` | The presigned URL generate from the user's profile.  Required for downloading an application distribution. |
+| `FOUNDRY_RELEASE_URL` | The presigned URL generated from the user's profile.  Required for downloading an application distribution. |
 
 ### Optional variables ###
 
