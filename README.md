@@ -43,7 +43,7 @@ docker run \
   --env FOUNDRY_PASSWORD='<your_password>' \
   --publish 30000:30000/tcp \
   --volume <your_data_dir>:/data \
-  felddy/foundryvtt:13
+  felddy/foundryvtt:14
 ```
 
 > [!TIP]
@@ -67,7 +67,7 @@ docker run \
   --env FOUNDRY_RELEASE_URL='<temporary_url>' \
   --publish 30000:30000/tcp \
   --volume <your_data_dir>:/data \
-  felddy/foundryvtt:13
+  felddy/foundryvtt:14
 ```
 
 ### Configuration management ###
@@ -92,7 +92,7 @@ configuration files, set `CONTAINER_PRESERVE_CONFIG` to `true`.
     ---
     services:
       foundry:
-        image: felddy/foundryvtt:13
+        image: felddy/foundryvtt:14
         hostname: my_foundry_host
         volumes:
           - type: bind
@@ -151,7 +151,7 @@ uses `secrets.json`.  Regardless of the name you choose it must be targeted to
 
     services:
       foundry:
-        image: felddy/foundryvtt:13
+        image: felddy/foundryvtt:14
         hostname: my_foundry_host
         volumes:
           - type: bind
@@ -209,7 +209,7 @@ versions](https://semver.org) that align with the [version and build of Foundry
 Virtual Tabletop](https://foundryvtt.com/article/versioning/) that they support.
 
 > [!TIP]
-> It is recommended that users use the major version tag: `:13` Using the major
+> It is recommended that users use the major version tag: `:14` Using the major
 > tag will ensure that you receive the most recent version of the software that
 > is compatible with your saved data, and prevents inadvertent upgrades to a new
 > major version.
