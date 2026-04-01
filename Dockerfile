@@ -2,8 +2,12 @@ ARG CONTAINER_VERSION=14.357.0
 ARG FOUNDRY_RELEASE_URL
 ARG FOUNDRY_VERSION=14.357
 ARG NODE_IMAGE_VERSION=24-trixie-slim
+ARG NPM_VERSION=11.12.1
 
-FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION} AS compile-typescript-stage
+FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION} AS base
+RUN npm install -g npm@${NPM_VERSION}
+
+FROM base AS compile-typescript-stage
 
 WORKDIR /root
 
@@ -17,7 +21,7 @@ COPY /src/*.ts src/
 RUN npx tsc
 RUN grep -l "#!" dist/*.js | xargs chmod a+x
 
-FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION} AS optional-release-stage
+FROM base AS optional-release-stage
 
 # This stage is optional and will only be executed if the FOUNDRY_RELEASE_URL or
 # FOUNDRY_USERNAME and FOUNDRY_PASSWORD secrets are provided.  It will download
@@ -58,7 +62,7 @@ RUN \
   unzip -d "dist/resources/app" ${ARCHIVE}; \
   fi
 
-FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION} AS final-stage
+FROM base AS final-stage
 
 ARG CONTAINER_VERSION
 ARG FOUNDRY_VERSION
