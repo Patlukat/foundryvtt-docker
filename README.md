@@ -141,7 +141,6 @@ uses `secrets.json`.  Regardless of the name you choose it must be targeted to
     ```
 
 1. Then add the secret to your `compose.yml` file:
-1. Then add the secret to your `compose.yml` file:
 
     ```yaml
     ---
