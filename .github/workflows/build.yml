@@ -164,7 +164,7 @@ jobs:
       attestations: write
     with:
       image-name: ${{ needs.config.outputs.image_name_preinstall }}
-      platforms: ${{ needs.config.outputs.platforms }}
+      platforms: ${{ needs.config.outputs.test_platforms }}
     secrets:
       private-package-token: ${{ secrets.PRIVATE_PACKAGE_TOKEN }}
 
