@@ -46,10 +46,10 @@ const LOGIN_URL = BASE_URL + "/auth/login/";
 const USERNAME_RE = /\/community\/(?<username>.+)/;
 
 const HEADERS: Headers = new Headers({
-  DNT: "1",
-  Referer: BASE_URL,
-  "Upgrade-Insecure-Requests": "1",
-  "User-Agent": "node-fetch",
+    DNT: "1",
+    Referer: BASE_URL,
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "node-fetch",
 });
 
 /**
@@ -58,26 +58,26 @@ const HEADERS: Headers = new Headers({
  * @return {string}  CSRF middleware token extracted from the login form.
  */
 async function fetchTokens(): Promise<string> {
-  // Make a request to the main site to get our two CSRF tokens
-  logger.info(`Requesting CSRF tokens from ${BASE_URL}`);
-  logger.debug(`Fetching: ${BASE_URL}`);
-  const response = await fetch(BASE_URL, {
-    agent: AGENT,
-    headers: HEADERS,
-    method: "GET",
-  });
-  if (!response.ok) {
-    throw new Error(`Unexpected response ${response.statusText}`);
-  }
-  const body = await response.text();
-  const $ = cheerio.load(body);
+    // Make a request to the main site to get our two CSRF tokens
+    logger.info(`Requesting CSRF tokens from ${BASE_URL}`);
+    logger.debug(`Fetching: ${BASE_URL}`);
+    const response = await fetch(BASE_URL, {
+        agent: AGENT,
+        headers: HEADERS,
+        method: "GET",
+    });
+    if (!response.ok) {
+        throw new Error(`Unexpected response ${response.statusText}`);
+    }
+    const body = await response.text();
+    const $ = cheerio.load(body);
 
-  const token = $('input[name="csrfmiddlewaretoken"]').attr("value")?.trim();
-  if (!token) {
-    logger.error("Could not find the CSRF middleware token.");
-    throw new Error("Could not find the CSRF middleware token.");
-  }
-  return token;
+    const token = $('input[name="csrfmiddlewaretoken"]').attr("value")?.trim();
+    if (!token) {
+        logger.error("Could not find the CSRF middleware token.");
+        throw new Error("Could not find the CSRF middleware token.");
+    }
+    return token;
 }
 
 /**
@@ -89,60 +89,62 @@ async function fetchTokens(): Promise<string> {
  * @return {string}                     The actual username of the account.
  */
 async function login(
-  csrfmiddlewaretoken: string,
-  username: string,
-  password: string,
+    csrfmiddlewaretoken: string,
+    username: string,
+    password: string,
 ) {
-  const form_params = new URLSearchParams({
-    csrfmiddlewaretoken: csrfmiddlewaretoken,
-    next: "/",
-    password: password,
-    username: username,
-  });
+    const form_params = new URLSearchParams({
+        csrfmiddlewaretoken: csrfmiddlewaretoken,
+        next: "/",
+        password: password,
+        username: username,
+    });
 
-  logger.info(`Logging in as: ${username}`);
-  logger.debug(`Fetching: ${LOGIN_URL}`);
-  const response = await fetch(LOGIN_URL, {
-    body: form_params,
-    method: "POST",
-    headers: HEADERS,
-    agent: AGENT,
-  });
-  if (!response.ok) {
-    throw new Error(`Unexpected response ${response.statusText}`);
-  }
-  const body = await response.text();
-  const $ = await cheerio.load(body);
+    logger.info(`Logging in as: ${username}`);
+    logger.debug(`Fetching: ${LOGIN_URL}`);
+    const response = await fetch(LOGIN_URL, {
+        body: form_params,
+        method: "POST",
+        headers: HEADERS,
+        agent: AGENT,
+    });
+    if (!response.ok) {
+        throw new Error(`Unexpected response ${response.statusText}`);
+    }
+    const body = await response.text();
+    const $ = await cheerio.load(body);
 
-  // Check to see if we have a sessionid (logged in)
-  const cookies = cookieJar.getCookiesSync(BASE_URL);
-  const session_cookie = cookies.find((cookie) => {
-    return cookie.key == "sessionid";
-  });
-  if (!session_cookie) {
-    logger.error(`Unable to log in as ${username}, verify your credentials...`);
-    throw new Error(
-      `Unable to log in as ${username}, verify your credentials...`,
-    );
-  }
+    // Check to see if we have a sessionid (logged in)
+    const cookies = cookieJar.getCookiesSync(BASE_URL);
+    const session_cookie = cookies.find((cookie) => {
+        return cookie.key == "sessionid";
+    });
+    if (!session_cookie) {
+        logger.error(
+            `Unable to log in as ${username}, verify your credentials...`,
+        );
+        throw new Error(
+            `Unable to log in as ${username}, verify your credentials...`,
+        );
+    }
 
-  // A user may login with an e-mail address.  Resolve it to a username now.
-  const communityURL: string | undefined = $("#login-welcome a").attr("href");
-  logger.debug(`Community URL: ${communityURL}`);
-  if (!communityURL) {
-    logger.error("Could not find the community URL.");
-    throw new Error("Could not find the community URL.");
-  }
-  const match = communityURL.match(USERNAME_RE);
-  if (!match?.groups?.username) {
-    logger.error(`Unable to resolve username from ${communityURL}`);
-    throw new Error(`Unable to resolve username from ${communityURL}`);
-  }
-  const loggedInUsername = match.groups.username;
-  logger.info(`Successfully logged in as: ${loggedInUsername}`);
+    // A user may login with an e-mail address.  Resolve it to a username now.
+    const communityURL: string | undefined = $("#login-welcome a").attr("href");
+    logger.debug(`Community URL: ${communityURL}`);
+    if (!communityURL) {
+        logger.error("Could not find the community URL.");
+        throw new Error("Could not find the community URL.");
+    }
+    const match = communityURL.match(USERNAME_RE);
+    if (!match?.groups?.username) {
+        logger.error(`Unable to resolve username from ${communityURL}`);
+        throw new Error(`Unable to resolve username from ${communityURL}`);
+    }
+    const loggedInUsername = match.groups.username;
+    logger.info(`Successfully logged in as: ${loggedInUsername}`);
 
-  // The site preserves case, but this will break our use in the LICENSE_URL
-  return loggedInUsername.toLowerCase();
+    // The site preserves case, but this will break our use in the LICENSE_URL
+    return loggedInUsername.toLowerCase();
 }
 
 /**
@@ -151,50 +153,50 @@ async function login(
  * @return {number}  exit code
  */
 async function main(): Promise<number> {
-  // Parse command line options.
-  const options = docopt.docopt(doc, { version: "1.0.0" });
+    // Parse command line options.
+    const options = docopt.docopt(doc, { version: "1.0.0" });
 
-  // Extract values from CLI options.
-  const cookiejar_filename = options["<cookiejar>"];
-  const log_level = options["--log-level"].toLowerCase();
-  HEADERS.set("User-Agent", options["--user-agent"]);
-  const password = options["<password>"];
-  const username = options["<username>"].toLowerCase();
+    // Extract values from CLI options.
+    const cookiejar_filename = options["<cookiejar>"];
+    const log_level = options["--log-level"].toLowerCase();
+    HEADERS.set("User-Agent", options["--user-agent"]);
+    const password = options["<password>"];
+    const username = options["<username>"].toLowerCase();
 
-  // Setup logging.
-  logger = createLogger("Authenticate", log_level);
+    // Setup logging.
+    logger = createLogger("Authenticate", log_level);
 
-  // Setup global cookie jar, storage, and fetch library
-  logger.debug(`Saving cookies to: ${cookiejar_filename}`);
-  cookieJar = new CookieJar(new FileCookieStore(cookiejar_filename));
-  fetch = fetchCookie(nodeFetch, cookieJar);
+    // Setup global cookie jar, storage, and fetch library
+    logger.debug(`Saving cookies to: ${cookiejar_filename}`);
+    cookieJar = new CookieJar(new FileCookieStore(cookiejar_filename));
+    fetch = fetchCookie(nodeFetch, cookieJar);
 
-  try {
-    // Get the tokens and cookies we'll need to login.
-    const csrfmiddlewaretoken = await fetchTokens();
+    try {
+        // Get the tokens and cookies we'll need to login.
+        const csrfmiddlewaretoken = await fetchTokens();
 
-    // Login using the credentials, tokens, and cookies.
-    const loggedInUsername = await login(
-      csrfmiddlewaretoken,
-      username,
-      password,
-    );
+        // Login using the credentials, tokens, and cookies.
+        const loggedInUsername = await login(
+            csrfmiddlewaretoken,
+            username,
+            password,
+        );
 
-    // Store the username in a cookie for use by other utilities
-    const username_cookie = Cookie.parse(
-      `username=${loggedInUsername}; Domain=${LOCAL_DOMAIN}; Path=/`,
-    );
-    cookieJar.setCookieSync(
-      username_cookie!.toString(),
-      `http://${LOCAL_DOMAIN}`,
-    );
-  } catch (err: any) {
-    logger.error(`Unable to authenticate: ${err.message}`);
-    return -1;
-  }
-  return 0;
+        // Store the username in a cookie for use by other utilities
+        const username_cookie = Cookie.parse(
+            `username=${loggedInUsername}; Domain=${LOCAL_DOMAIN}; Path=/`,
+        );
+        cookieJar.setCookieSync(
+            username_cookie!.toString(),
+            `http://${LOCAL_DOMAIN}`,
+        );
+    } catch (err: any) {
+        logger.error(`Unable to authenticate: ${err.message}`);
+        return -1;
+    }
+    return 0;
 }
 
 (async () => {
-  process.exitCode = await main();
+    process.exitCode = await main();
 })();

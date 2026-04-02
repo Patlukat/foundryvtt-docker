@@ -11,10 +11,10 @@ const custom_salt: string | null = process.env.FOUNDRY_PASSWORD_SALT || null;
 
 var plaintext: string = fs.readFileSync(process.stdin.fd, "utf-8");
 var cyphertext: Buffer = crypto.pbkdf2Sync(
-  plaintext.trim(),
-  custom_salt || low_sodium,
-  iterations,
-  keylen,
-  digest,
+    plaintext.trim(),
+    custom_salt || low_sodium,
+    iterations,
+    keylen,
+    digest,
 );
 process.stdout.write(cyphertext.toString("hex"));

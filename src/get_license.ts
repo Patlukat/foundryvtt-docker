@@ -52,10 +52,10 @@ const BASE_URL: string = "https://foundryvtt.com";
 const LOCAL_DOMAIN: string = "felddy.com";
 
 const HEADERS: Headers = new Headers({
-  DNT: "1",
-  Referer: BASE_URL,
-  "Upgrade-Insecure-Requests": "1",
-  "User-Agent": "node-fetch",
+    DNT: "1",
+    Referer: BASE_URL,
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "node-fetch",
 });
 
 /**
@@ -65,28 +65,28 @@ const HEADERS: Headers = new Headers({
  * @return {string[]}        License keys formatted without dashes.
  */
 async function fetchLicenses(username: string): Promise<string[]> {
-  logger.info("Fetching licenses.");
-  const LICENSE_URL = `${BASE_URL}/community/${username}/licenses`;
-  logger.debug(`Fetching: ${LICENSE_URL}`);
-  const response = await fetch(LICENSE_URL, {
-    agent: AGENT,
-    headers: HEADERS,
-    method: "GET",
-  });
-  if (!response.ok) {
-    throw new Error(`Unexpected response ${response.statusText}`);
-  }
-  const body = await response.text();
-  const $ = cheerio.load(body);
+    logger.info("Fetching licenses.");
+    const LICENSE_URL = `${BASE_URL}/community/${username}/licenses`;
+    logger.debug(`Fetching: ${LICENSE_URL}`);
+    const response = await fetch(LICENSE_URL, {
+        agent: AGENT,
+        headers: HEADERS,
+        method: "GET",
+    });
+    if (!response.ok) {
+        throw new Error(`Unexpected response ${response.statusText}`);
+    }
+    const body = await response.text();
+    const $ = cheerio.load(body);
 
-  const licenses: string[] = $("div.license label.copy input")
-    .map((_, el) => {
-      const value = $(el).attr("value");
-      return value ? value.replace(/-/g, "") : undefined; // remove dashes
-    })
-    .get()
-    .filter(Boolean);
-  return licenses;
+    const licenses: string[] = $("div.license label.copy input")
+        .map((_, el) => {
+            const value = $(el).attr("value");
+            return value ? value.replace(/-/g, "") : undefined; // remove dashes
+        })
+        .get()
+        .filter(Boolean);
+    return licenses;
 }
 
 /**
@@ -95,89 +95,89 @@ async function fetchLicenses(username: string): Promise<string[]> {
  * @return {number}  exit code
  */
 async function main(): Promise<number> {
-  // Parse command line options.
-  const options = docopt.docopt(doc, { version: "1.0.0" });
+    // Parse command line options.
+    const options = docopt.docopt(doc, { version: "1.0.0" });
 
-  // Extract values from CLI options.
-  const cookiejar_filename: string = options["<cookiejar>"];
-  const log_level: string = options["--log-level"].toLowerCase();
-  const select_mode: string = options["--select"];
-  HEADERS.set("User-Agent", options["--user-agent"]);
+    // Extract values from CLI options.
+    const cookiejar_filename: string = options["<cookiejar>"];
+    const log_level: string = options["--log-level"].toLowerCase();
+    const select_mode: string = options["--select"];
+    HEADERS.set("User-Agent", options["--user-agent"]);
 
-  // Setup logging.
-  logger = createLogger("License", log_level);
+    // Setup logging.
+    logger = createLogger("License", log_level);
 
-  // Setup global cookie jar, storage, and fetch library
-  logger.debug(`Reading cookies from: ${cookiejar_filename}`);
-  cookieJar = new CookieJar(new FileCookieStore(cookiejar_filename));
-  fetch = fetchCookie(nodeFetch, cookieJar);
+    // Setup global cookie jar, storage, and fetch library
+    logger.debug(`Reading cookies from: ${cookiejar_filename}`);
+    cookieJar = new CookieJar(new FileCookieStore(cookiejar_filename));
+    fetch = fetchCookie(nodeFetch, cookieJar);
 
-  // Retrieve username from cookie.
-  const local_cookies = cookieJar.getCookiesSync(`http://${LOCAL_DOMAIN}`);
-  if (local_cookies.length != 1) {
-    logger.error(
-      `Wrong number of cookies found for ${LOCAL_DOMAIN}.  Expected 1, found ${local_cookies.length}`,
-    );
-    return -1;
-  }
-  const loggedInUsername = local_cookies[0].value;
-
-  // Attempt to fetch a license key.
-  const license_keys = await fetchLicenses(loggedInUsername);
-  const key_count = license_keys.length;
-
-  // Handle no license keys found.
-  if (key_count == 0) {
-    logger.error(
-      `Could not find any license keys associated with account ${loggedInUsername}`,
-    );
-    return -1;
-  } else {
-    logger.info(
-      `Found ${key_count} license ${
-        key_count == 1 ? "key" : "keys"
-      } associated with account ${loggedInUsername}`,
-    );
-  }
-
-  // Handle a single license key found.
-  if (key_count == 1) {
-    logger.debug("Returning single license.");
-    process.stdout.write(license_keys[0]);
-    return 0;
-  }
-
-  // Handle multiple licenses keys found.
-  var select_index: number;
-
-  // Use a 1-based index when communicating with the user.
-  if (!parseInt(select_mode)) {
-    // No numeric index specified, so select a random license key.
-    select_index = Math.floor(Math.random() * key_count) + 1;
-    logger.info(`License key #${select_index} randomly selected.`);
-    process.stdout.write(license_keys[select_index - 1]);
-    return 0;
-  } else {
-    // mode is integer
-    select_index = parseInt(select_mode);
-    if (select_index > key_count) {
-      logger.warn(
-        `Invalid license key index ${select_index} selected by user.  Using ${key_count}.`,
-      );
-      select_index = key_count;
+    // Retrieve username from cookie.
+    const local_cookies = cookieJar.getCookiesSync(`http://${LOCAL_DOMAIN}`);
+    if (local_cookies.length != 1) {
+        logger.error(
+            `Wrong number of cookies found for ${LOCAL_DOMAIN}.  Expected 1, found ${local_cookies.length}`,
+        );
+        return -1;
     }
-    if (select_index < 1) {
-      logger.warn(
-        `Invalid license key index ${select_index} selected by user.  Using 1.`,
-      );
-      select_index = 1;
+    const loggedInUsername = local_cookies[0].value;
+
+    // Attempt to fetch a license key.
+    const license_keys = await fetchLicenses(loggedInUsername);
+    const key_count = license_keys.length;
+
+    // Handle no license keys found.
+    if (key_count == 0) {
+        logger.error(
+            `Could not find any license keys associated with account ${loggedInUsername}`,
+        );
+        return -1;
+    } else {
+        logger.info(
+            `Found ${key_count} license ${
+                key_count == 1 ? "key" : "keys"
+            } associated with account ${loggedInUsername}`,
+        );
     }
-    logger.info(`License key #${select_index} selected by user.`);
-    process.stdout.write(license_keys[select_index - 1]);
-    return 0;
-  }
+
+    // Handle a single license key found.
+    if (key_count == 1) {
+        logger.debug("Returning single license.");
+        process.stdout.write(license_keys[0]);
+        return 0;
+    }
+
+    // Handle multiple licenses keys found.
+    var select_index: number;
+
+    // Use a 1-based index when communicating with the user.
+    if (!parseInt(select_mode)) {
+        // No numeric index specified, so select a random license key.
+        select_index = Math.floor(Math.random() * key_count) + 1;
+        logger.info(`License key #${select_index} randomly selected.`);
+        process.stdout.write(license_keys[select_index - 1]);
+        return 0;
+    } else {
+        // mode is integer
+        select_index = parseInt(select_mode);
+        if (select_index > key_count) {
+            logger.warn(
+                `Invalid license key index ${select_index} selected by user.  Using ${key_count}.`,
+            );
+            select_index = key_count;
+        }
+        if (select_index < 1) {
+            logger.warn(
+                `Invalid license key index ${select_index} selected by user.  Using 1.`,
+            );
+            select_index = 1;
+        }
+        logger.info(`License key #${select_index} selected by user.`);
+        process.stdout.write(license_keys[select_index - 1]);
+        return 0;
+    }
 }
 
 (async () => {
-  process.exitCode = await main();
+    process.exitCode = await main();
 })();
