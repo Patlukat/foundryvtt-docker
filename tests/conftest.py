@@ -21,7 +21,10 @@ REDACTION_REGEXES = [
 VERSION_FILE = "src/version.txt"
 VERSION_SERVICE_NAME = f"{MAIN_SERVICE_NAME}-version"
 
-client = docker.from_env()
+
+def _docker_client():
+    """Lazy Docker client — only connects when actually needed."""
+    return docker.from_env()
 
 
 @pytest.fixture(autouse=True)
@@ -45,7 +48,7 @@ def group_github_log_lines(request):
 @pytest.fixture(scope="session")
 def main_container(image_tag):
     """Fixture for the main Foundry container."""
-    container = client.containers.run(
+    container = _docker_client().containers.run(
         image_tag,
         detach=True,
         environment={
@@ -68,7 +71,7 @@ def main_container(image_tag):
 @pytest.fixture(scope="session")
 def version_container(image_tag):
     """Fixture for the version container."""
-    container = client.containers.run(
+    container = _docker_client().containers.run(
         image_tag,
         command="--version",
         detach=True,
