@@ -1,5 +1,6 @@
 --editable .[test]
 --requirement requirements.txt
+docker
 hypothesis
 pre-commit
 pytest
