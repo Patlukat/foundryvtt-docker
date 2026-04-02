@@ -109,12 +109,14 @@ if [ -f "${secret_file}" ]; then
   secret_license_key=$(jq --exit-status --raw-output .foundry_license_key ${secret_file}) || secret_license_key=""
   secret_password=$(jq --exit-status --raw-output .foundry_password ${secret_file}) || secret_password=""
   secret_password_salt=$(jq --exit-status --raw-output .foundry_password_salt ${secret_file}) || secret_password_salt=""
+  secret_service_key=$(jq --exit-status --raw-output .foundry_service_key ${secret_file}) || secret_service_key=""
   secret_username=$(jq --exit-status --raw-output .foundry_username ${secret_file}) || secret_username=""
   # Override environment variables if secrets were set
   FOUNDRY_ADMIN_KEY=${secret_admin_key:-${FOUNDRY_ADMIN_KEY:-}}
   FOUNDRY_LICENSE_KEY=${secret_license_key:-${FOUNDRY_LICENSE_KEY:-}}
   FOUNDRY_PASSWORD=${secret_password:-${FOUNDRY_PASSWORD:-}}
   FOUNDRY_PASSWORD_SALT=${secret_password_salt:-${FOUNDRY_PASSWORD_SALT:-}}
+  FOUNDRY_SERVICE_KEY=${secret_service_key:-${FOUNDRY_SERVICE_KEY:-}}
   FOUNDRY_USERNAME=${secret_username:-${FOUNDRY_USERNAME:-}}
 fi
 
@@ -387,7 +389,7 @@ fi
 
 # Export variables that were possibly set from secrets
 # and are used by the launcher.
-export FOUNDRY_ADMIN_KEY FOUNDRY_PASSWORD_SALT
+export FOUNDRY_ADMIN_KEY FOUNDRY_PASSWORD_SALT FOUNDRY_SERVICE_KEY
 
 log "Starting launcher."
 # set the TERM signal handler
