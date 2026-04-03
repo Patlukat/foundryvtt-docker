@@ -44,7 +44,7 @@ backoff_reset() {
 #
 #   Cache directory configured:
 #     Read state file (missing/corrupt → treat as consecutive_failures=0).
-#     Compute delay = min(10 * 2^(n-1), 960) where n = consecutive_failures + 1.
+#     Compute delay = min(10 * 2^(n-2), 960) where n = consecutive_failures + 1.
 #     Log failure count and delay.
 #     Write updated state file atomically (.tmp + mv).
 #     Sleep $delay in background (interruptible by SIGTERM).
