@@ -18,7 +18,7 @@ let parsedDemoConfig: any = undefined;
  * @param {number} min The lower boundary of the output range
  * @param {number} max The upper boundary of the output range
  * @param {number | null} unset The default value to return if the environment variable is not set
- * @return {number | null} clamped value, or undefined
+ * @return {number | null} clamped value, or null
  */
 function clampEnv(
     envVarValue: string | undefined,
