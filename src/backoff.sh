@@ -12,7 +12,7 @@
 # Depends on logging.sh being sourced by the caller before this file.
 
 # PID of any in-progress background sleep subprocess.
-# entrypoint.sh's handle_sigterm should kill this PID if set.
+# entrypoint.sh's trap_sigterm kills this PID to interrupt the sleep promptly.
 backoff_sleep_pid=""
 
 # backoff_reset
