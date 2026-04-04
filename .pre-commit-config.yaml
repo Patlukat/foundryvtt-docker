@@ -189,6 +189,14 @@ repos:
     rev: 0.11.3
     hooks:
       - id: uv-lock
+  - repo: local
+    hooks:
+      - id: uv-audit
+        name: uv-audit
+        language: system
+        entry: uv audit --preview-features audit
+        files: ^uv.lock$
+        pass_filenames: false
 
   # Ansible hooks
   - repo: https://github.com/ansible/ansible-lint
