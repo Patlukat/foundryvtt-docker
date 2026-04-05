@@ -191,9 +191,6 @@ nodeenv --python-virtualenv
 # Install project node dependencies.
 npm install
 
-# Deactivate the virtual environment now that setup is complete.
-deactivate
-
 # Setup git remotes from lineage configuration.
 # This could fail if the remotes are already set up, but that is ok.
 set +o errexit
@@ -222,6 +219,9 @@ else:
     print(f'Unsupported lineage version: {lineage["version"]}', file=sys.stderr)
 END_OF_LINE
 )"
+
+# Deactivate the virtual environment now that setup is complete.
+deactivate
 
 # Qapla'
 echo "Success!"
