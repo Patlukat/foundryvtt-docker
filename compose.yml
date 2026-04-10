@@ -56,7 +56,7 @@ services:
       # - FOUNDRY_UNIX_SOCKET=
       # - FOUNDRY_UPNP=false
       # - FOUNDRY_UPNP_LEASE_DURATION=
-      # - FOUNDRY_VERSION=14.359
+      # - FOUNDRY_VERSION=14.360
       # - FOUNDRY_WORLD=
     ports:
       - target: 30000
