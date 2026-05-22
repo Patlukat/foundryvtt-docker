@@ -185,8 +185,8 @@ if [ "$with_prerelease" = true ]; then
 fi
 
 # Derive short (X.Y) versions for files that use the two-component form (e.g. Dockerfile, compose.yml)
-old_short="${old_version%.*}"
-new_short="${new_version%.*}"
+old_short=$(python -c "import semver; v=semver.parse_version_info('$old_version'); print(f'{v.major}.{v.minor}')")
+new_short=$(python -c "import semver; v=semver.parse_version_info('$new_version'); print(f'{v.major}.{v.minor}')")
 old_short_regex="${old_short//\./\\.}"
 
 tmp_files=()
