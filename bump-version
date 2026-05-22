@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# bump-version [--push] [--label LABEL] (major | minor | patch | prerelease | build | finalize | show)
+# bump-version [--push] [--label LABEL] (major | minor | patch | prerelease | build | finalize | set X.Y.Z | show)
 # bump-version --list-files
 
 set -o nounset
@@ -10,7 +10,14 @@ set -o pipefail
 # Stores the canonical version for the project.
 VERSION_FILE=src/version.txt
 # Files that should be updated with the new version.
-VERSION_FILES=("$VERSION_FILE" README.md)
+VERSION_FILES=(
+  "$VERSION_FILE"
+  Dockerfile
+  README.md
+  compose.yml
+  .github/ISSUE_TEMPLATE/bug.yml
+  .github/ISSUE_TEMPLATE/regression.yml
+)
 
 USAGE=$(
   cat << END_OF_LINE
@@ -18,6 +25,7 @@ Update the version of the project.
 
 Usage:
   ${0##*/} [--push] [--label LABEL] (major | minor | patch | prerelease | build | finalize | show)
+  ${0##*/} set <version>
   ${0##*/} --list-files
   ${0##*/} (-h | --help)
 
@@ -26,6 +34,9 @@ Options:
   --push         Perform a \`git push\` after updating the version.
   --label LABEL  Specify the label to use when updating the build or prerelease version.
   --list-files   List the files that will be updated when the version is bumped.
+
+Commands:
+  set <version>  Set an explicit version (e.g. 14.365.0). Use when Foundry skips build numbers.
 END_OF_LINE
 )
 
@@ -98,6 +109,20 @@ else
         bump_part="$1"
         shift
         ;;
+      set)
+        if [ -n "$bump_part" ]; then
+          invalid_option "Only one version part should be bumped at a time."
+        fi
+        if [ -z "${2:-}" ]; then
+          invalid_option "'set' requires a version argument (e.g. 14.365.0)"
+        fi
+        if ! python -c 'import semver, sys; semver.VersionInfo.parse(sys.argv[1])' "$2" > /dev/null 2>&1; then
+          invalid_option "'set' requires a valid semver version (e.g. 14.365.0)"
+        fi
+        new_version="$2"
+        bump_part="set"
+        shift 2
+        ;;
       prerelease)
         with_prerelease=true
         shift
@@ -138,30 +163,56 @@ if [ -n "$bump_part" ]; then
   if [ "$bump_part" = "finalize" ]; then
     commit_prefix="Finalize"
     bump_command="finalize_version()"
+  elif [ "$bump_part" = "set" ]; then
+    echo "Setting version from $old_version to $new_version"
   elif [ "$bump_part" = "build" ]; then
     bump_command="bump_${bump_part}($label_option)"
   else
     bump_command="bump_${bump_part}()"
   fi
-  new_version=$(bump_version "$old_version" "$bump_command")
-  echo Changing version from "$old_version" to "$new_version"
+
+  if [ "$bump_part" != "set" ]; then
+    new_version=$(bump_version "$old_version" "$bump_command")
+    echo "Changing version from $old_version to $new_version"
+  fi
 fi
 
 if [ "$with_prerelease" = true ]; then
   bump_command="bump_prerelease($label_option)"
   temp_version=$(bump_version "$new_version" "$bump_command")
-  echo Changing version from "$new_version" to "$temp_version"
+  echo "Changing version from $new_version to $temp_version"
   new_version="$temp_version"
 fi
 
-tmp_file=/tmp/version.$$
+# Derive short (X.Y) versions for files that use the two-component form (e.g. Dockerfile, compose.yml)
+old_short=$(python -c "import semver; v=semver.parse_version_info('$old_version'); print(f'{v.major}.{v.minor}')")
+new_short=$(python -c "import semver; v=semver.parse_version_info('$new_version'); print(f'{v.major}.{v.minor}')")
+old_short_regex="${old_short//\./\\.}"
+
+tmp_files=()
+cleanup_tmp_files() {
+  if [ ${#tmp_files[@]} -gt 0 ]; then
+    rm -f "${tmp_files[@]}"
+  fi
+}
+trap cleanup_tmp_files EXIT
+
 for version_file in "${VERSION_FILES[@]}"; do
   if [ ! -f "$version_file" ]; then
-    echo Missing expected file: "$version_file"
+    echo "Missing expected file: $version_file"
     exit 1
   fi
-  sed "s/$old_version_regex/$new_version/" "$version_file" > $tmp_file
-  mv $tmp_file "$version_file"
+
+  tmp_file_pass1=$(mktemp /tmp/version.pass1.XXXXXX)
+  tmp_file_pass2=$(mktemp /tmp/version.pass2.XXXXXX)
+  tmp_files+=("$tmp_file_pass1" "$tmp_file_pass2")
+
+  # Pass 1: replace full semver form (e.g. 14.360.0 → 14.361.0); must precede pass 2
+  sed "s/$old_version_regex/$new_version/g" "$version_file" > "$tmp_file_pass1"
+  # Pass 2: replace short form (e.g. 14.360 → 14.361)
+  sed "s/$old_short_regex/$new_short/g" "$tmp_file_pass1" > "$tmp_file_pass2"
+  mv "$tmp_file_pass2" "$version_file"
+  rm -f "$tmp_file_pass1"
 done
 
 git add "${VERSION_FILES[@]}"
