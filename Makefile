@@ -17,8 +17,9 @@ README.md: README.md.j2 src/version.txt guard-version
 build: guard-version
 	docker buildx build --build-arg CONTAINER_VERSION=$(CONTAINER_VERSION) --build-arg FOUNDRY_VERSION=$(FOUNDRY_VERSION) --load --tag $(IMAGE):$(CONTAINER_VERSION) .
 
-test:
-	uv run --group dev pytest tests/
+## test: run the test suite against the built container image.
+test: guard-version
+	uv run --group dev pytest tests/ --image-tag $(IMAGE):$(CONTAINER_VERSION)
 
 ## version: print the derived CONTAINER_VERSION and FOUNDRY_VERSION.
 version: guard-version
