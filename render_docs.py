@@ -7,6 +7,7 @@ import sys
 
 # Third-Party Libraries
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
+import semver
 
 
 def main() -> None:
@@ -31,20 +32,20 @@ def main() -> None:
         trim_blocks=True,
         undefined=StrictUndefined,
     )
-    version_core = container_version.split("+", 1)[0].split("-", 1)[0]
-    parts = version_core.split(".")
-    if len(parts) < 3:
+    try:
+        version = semver.Version.parse(container_version)
+    except ValueError as error:
         print(
-            f"ERROR: container_version must be semver (x.y.z); got {container_version!r}",
+            f"ERROR: container_version must be valid semver (x.y.z); "
+            f"got {container_version!r}: {error}",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    major, minor, _patch = parts[:3]
     rendered = env.get_template(template_path.name).render(
         container_version=container_version,
-        foundry_version=f"{major}.{minor}",
-        major_version=major,
+        foundry_version=f"{version.major}.{version.minor}",
+        major_version=str(version.major),
     )
     Path(output).write_text(rendered, encoding="utf-8", newline="\n")
 
