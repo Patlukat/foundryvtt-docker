@@ -18,12 +18,13 @@ COMMITTED="README.md"
 tmpfile=$(mktemp -t render-docs-check.XXXXXX)
 trap 'rm -f "$tmpfile"' EXIT INT TERM
 
-# Derive CONTAINER_VERSION from the single source of truth (whitespace trimmed).
-CONTAINER_VERSION=$(tr -d '[:space:]' < "$VERSION_FILE")
-if [ -z "$CONTAINER_VERSION" ]; then
+if [ ! -s "$VERSION_FILE" ]; then
   echo "ERROR: ${VERSION_FILE} is missing or empty." >&2
   exit 1
 fi
+
+# Derive CONTAINER_VERSION from the single source of truth (whitespace trimmed).
+CONTAINER_VERSION=$(tr -d '[:space:]' < "$VERSION_FILE")
 
 # Render the template to the temp file.  On any render failure (missing or
 # unparseable template, non-zero render-docs exit) report and abort without
