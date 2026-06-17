@@ -10,14 +10,7 @@ set -o pipefail
 # Stores the canonical version for the project.
 VERSION_FILE=src/version.txt
 # Files that should be updated with the new version.
-VERSION_FILES=(
-  "$VERSION_FILE"
-  Dockerfile
-  README.md
-  compose.yml
-  .github/ISSUE_TEMPLATE/bug.yml
-  .github/ISSUE_TEMPLATE/regression.yml
-)
+VERSION_FILES=("$VERSION_FILE")
 
 USAGE=$(
   cat << END_OF_LINE
