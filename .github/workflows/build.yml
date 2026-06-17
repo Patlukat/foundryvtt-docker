@@ -70,6 +70,9 @@ jobs:
       context: .
       dockerfile: ./Dockerfile
       scan-severity: CRITICAL,HIGH
+      build-args: |
+        CONTAINER_VERSION=${{ needs.config.outputs.container_version }}
+        FOUNDRY_VERSION=${{ needs.config.outputs.foundry_version }}
 
   build-preinstalled:
     name: Build and Publish Container Pre-Installed
@@ -91,6 +94,9 @@ jobs:
       dockerfile: ./Dockerfile
       scan-severity: "" # don't fail on vulns in FoundryVTT binaries
       upload-scan-results: false # don't pollute repo security tab with third-party vulns
+      build-args: |
+        CONTAINER_VERSION=${{ needs.config.outputs.container_version }}
+        FOUNDRY_VERSION=${{ needs.config.outputs.foundry_version }}
     secrets:
       private-package-token: ${{ secrets.PRIVATE_PACKAGE_TOKEN }}
       build-secret-1: ${{ secrets.FOUNDRY_PASSWORD }}

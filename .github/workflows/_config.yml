@@ -13,6 +13,12 @@ on: # yamllint disable-line rule:truthy
         required: false
         type: string
     outputs:
+      container_version:
+        description: The container version from src/version.txt
+        value: ${{ jobs.config.outputs.container_version }}
+      foundry_version:
+        description: The derived Foundry major.build version
+        value: ${{ jobs.config.outputs.foundry_version }}
       image_name:
         description: The container image name
         value: felddy/foundryvtt
@@ -30,6 +36,12 @@ jobs:
   config:
     name: Configuration
     runs-on: ubuntu-latest
+    outputs:
+      container_version: ${{ steps.version.outputs.container_version }}
+      foundry_version: ${{ steps.version.outputs.foundry_version }}
     steps:
-      - name: Placeholder
-        run: echo "Configuration workflow"
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # tag=v6.0.2
+      - name: Emit version outputs
+        id: version
+        run: make github-output >> "$GITHUB_OUTPUT"

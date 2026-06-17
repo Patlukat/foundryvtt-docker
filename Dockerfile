@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-ARG CONTAINER_VERSION=14.363.0
+ARG CONTAINER_VERSION
 ARG FOUNDRY_RELEASE_URL
-ARG FOUNDRY_VERSION=14.363
+ARG FOUNDRY_VERSION
 ARG NODE_IMAGE_VERSION=24-trixie-slim
 ARG NPM_VERSION=11.12.1
 
@@ -32,6 +32,9 @@ FROM base AS optional-release-stage
 
 ARG FOUNDRY_RELEASE_URL
 ARG FOUNDRY_VERSION
+
+RUN test -n "${FOUNDRY_VERSION}" || { echo "ERROR: FOUNDRY_VERSION must be passed as --build-arg"; exit 1; }
+
 ENV ARCHIVE="foundryvtt-${FOUNDRY_VERSION}.zip"
 
 WORKDIR /root
@@ -70,6 +73,8 @@ FROM base AS final-stage
 ARG CONTAINER_VERSION
 ARG FOUNDRY_VERSION
 ARG TARGETPLATFORM
+
+RUN test -n "${FOUNDRY_VERSION}" || { echo "ERROR: FOUNDRY_VERSION must be passed as --build-arg"; exit 1; }
 
 LABEL com.foundryvtt.version=${FOUNDRY_VERSION}
 LABEL org.opencontainers.image.authors="markf+github@geekpad.com"
