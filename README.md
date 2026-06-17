@@ -324,7 +324,7 @@ secrets](#using-secrets) instead of environment variables.
 | `FOUNDRY_VERSION` | Version of Foundry Virtual Tabletop to install. | `14.363` |
 | `FOUNDRY_WORLD` | The directory name of the world to launch at system start. | `null` |
 | `TZ` | Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) | `UTC` |
-| `*_PROXY` | Proxy settings to use during container initialization.  See [proxy-from-env](https://www.npmjs.com/package/proxy-from-env#environment-variables) for the list of supported environment variable names.  See [proxy-agent](https://www.npmjs.com/package/proxy-agent) for list of supported proxies protocols. | `null` |
+| `*_PROXY` | Proxy settings to use during container initialization and by Foundry at runtime.  See [proxy-from-env](https://www.npmjs.com/package/proxy-from-env#environment-variables) for the list of supported environment variable names.  See [proxy-agent](https://www.npmjs.com/package/proxy-agent) for list of supported proxy protocols. | `null` |
 
 ### Node.js variables ###
 
