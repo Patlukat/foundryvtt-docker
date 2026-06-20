@@ -21,8 +21,3 @@ __pycache__
 .python-version
 *.egg-info
 venv
-
-## Local override files ##
-# Personal, untracked variants (e.g. docker-compose-mine.yml). Mirrors the
-# global "-mine" convention so repo tooling (ansible-lint, etc.) skips them.
-*-mine.*
