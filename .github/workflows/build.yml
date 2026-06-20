@@ -178,9 +178,9 @@ jobs:
           # (no secrets are available); accept success or skipped, reject
           # failure/cancelled:
           [[ "${{ needs.build.result }}"              =~ ^(success|skipped)$ ]] || { echo "build: ${{ needs.build.result }}";                           exit 1; }
-          [[ "${{ needs.build-preinstalled.result }}" =~ ^(success|skipped)$ ]] || { echo "build-preinstalled: ${{ needs.build-preinstalled.result }}"; exit 1; }
+          [[ "${{ needs['build-preinstalled'].result }}" =~ ^(success|skipped)$ ]] || { echo "build-preinstalled: ${{ needs['build-preinstalled'].result }}"; exit 1; }
           [[ "${{ needs.test.result }}"               =~ ^(success|skipped)$ ]] || { echo "test: ${{ needs.test.result }}";                             exit 1; }
-          [[ "${{ needs.test-preinstalled.result }}"  =~ ^(success|skipped)$ ]] || { echo "test-preinstalled: ${{ needs.test-preinstalled.result }}";   exit 1; }
+          [[ "${{ needs['test-preinstalled'].result }}"  =~ ^(success|skipped)$ ]] || { echo "test-preinstalled: ${{ needs['test-preinstalled'].result }}";   exit 1; }
           echo "All required jobs passed."
 
   publish-manifest:
